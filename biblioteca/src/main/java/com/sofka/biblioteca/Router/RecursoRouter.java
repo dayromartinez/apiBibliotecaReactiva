@@ -2,10 +2,7 @@ package com.sofka.biblioteca.Router;
 
 
 import com.sofka.biblioteca.DTO.RecursoDTO;
-import com.sofka.biblioteca.UseCases.CreateUseCase;
-import com.sofka.biblioteca.UseCases.GetByNameUseCase;
-import com.sofka.biblioteca.UseCases.GetUseCase;
-import com.sofka.biblioteca.UseCases.ListUseCase;
+import com.sofka.biblioteca.UseCases.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -69,4 +66,31 @@ public class RecursoRouter {
                 request -> request.bodyToMono(RecursoDTO.class).flatMap(executor)
         );
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> update(UpdateUseCase updateUseCase) {
+        Function<RecursoDTO, Mono<ServerResponse>> executor = recursoDTO ->  updateUseCase.apply(recursoDTO)
+                .flatMap(result -> ServerResponse.ok()
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .bodyValue(result));
+
+        return route(
+                PUT("/update").and(accept(MediaType.APPLICATION_JSON)),
+                request -> request.bodyToMono(RecursoDTO.class).flatMap(executor)
+        );
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> delete(DeleteUseCase deleteUseCase) {
+        return route(
+                DELETE("/delete/{id}").and(accept(MediaType.APPLICATION_JSON)),
+                request -> ServerResponse.accepted()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(BodyInserters.fromPublisher(deleteUseCase.apply(request.pathVariable("id")), Void.class))
+        );
+    }
+
+
+
+
 }
