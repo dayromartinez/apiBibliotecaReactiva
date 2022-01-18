@@ -103,5 +103,17 @@ public class RecursoRouter {
         );
     }
 
+    @Bean
+    public RouterFunction<ServerResponse> prestarRecurso(PrestarRecursoUseCase prestarRecursoUseCase) {
+        return route(
+                PUT("/recurso/prestar/{id}").and(accept(MediaType.APPLICATION_JSON)),
+                request -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(BodyInserters.fromPublisher(prestarRecursoUseCase.apply(
+                                        request.pathVariable("id")),
+                                String.class
+                        ))
+        );
+    }
 
 }
