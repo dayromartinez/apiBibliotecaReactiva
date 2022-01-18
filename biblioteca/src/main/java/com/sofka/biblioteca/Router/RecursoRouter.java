@@ -116,4 +116,17 @@ public class RecursoRouter {
         );
     }
 
+    @Bean
+    public RouterFunction<ServerResponse> devolverRecurso(DevolverRecursoUseCase devolverRecursoUseCase) {
+        return route(
+                PUT("/recurso/devolver/{id}").and(accept(MediaType.APPLICATION_JSON)),
+                request -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(BodyInserters.fromPublisher(devolverRecursoUseCase.apply(
+                                        request.pathVariable("id")),
+                                String.class
+                        ))
+        );
+    }
+
 }
