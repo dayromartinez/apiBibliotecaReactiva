@@ -28,7 +28,7 @@ public class DisponibilidadRecursoUseCase implements Function<String, Mono<Strin
         Objects.requireNonNull(nombre, "El nombre es requerido para buscar el recurso");
         return recursoRepository.findByNombre(nombre)
                 .map(recursoMapper.mapEntityToDTO())
-                .flatMap(recursoDTO -> recursoDTO.getEnPrestamo() ? Mono.just("El recurso consultado se encuentra en préstamo") :
+                .flatMap(recursoDTO -> Boolean.TRUE.equals(recursoDTO.getEnPrestamo()) ? Mono.just("El recurso consultado se encuentra en préstamo") :
                         Mono.just("El recurso consultado se encuentra disponible para su préstamo"));
     }
 }

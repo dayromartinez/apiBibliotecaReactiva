@@ -90,7 +90,18 @@ public class RecursoRouter {
         );
     }
 
-
+    @Bean
+    public RouterFunction<ServerResponse> consultarDisponibilidad(DisponibilidadRecursoUseCase disponibilidadRecursoUseCase) {
+        return route(
+                GET("/recurso/disponibilidad/{name}").and(accept(MediaType.APPLICATION_JSON)),
+                request -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(BodyInserters.fromPublisher(disponibilidadRecursoUseCase.apply(
+                                        request.pathVariable("name")),
+                                String.class
+                        ))
+        );
+    }
 
 
 }
